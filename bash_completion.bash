@@ -41,7 +41,7 @@ _mvn()
     plugin_goals_jboss="jboss:start|jboss:stop|jboss:deploy|jboss:undeploy|jboss:redeploy"
     plugin_goals_tomcat="tomcat:start|tomcat:stop|tomcat:deploy|tomcat:undeploy|tomcat:undeploy"
     plugin_goals_exec="exec:exec|exec:java"
-    plugin_goals_versions="verions:set|versions:commit|versions:revert"
+    plugin_goals_versions="versions:set|versions:commit|versions:revert"
 
     options="-Dmaven.test.skip=true|-DskipTests|-Dmaven.surefire.debug|-DenableCiProfile|-Dpmd.skip=true|-Dcheckstyle.skip=true"
 
