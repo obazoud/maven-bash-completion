@@ -43,7 +43,7 @@ _mvn()
     plugin_goals_exec="exec:exec|exec:java"
     plugin_goals_versions="versions:set|versions:commit|versions:revert"
 
-    plugin_goals_sonar="sonar:sonar"
+    plugin_goals_sonar="sonar:sonar|sonar:help"
 
     options="-Dmaven.test.skip=true|-DskipTests|-Dmaven.surefire.debug|-DenableCiProfile|-Dpmd.skip=true|-Dcheckstyle.skip=true"
 
