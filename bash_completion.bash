@@ -2,6 +2,16 @@ _mvn()
 {
     local cur prev opts
     COMPREPLY=()
+
+	# Find grep command:
+	local binpath GREP
+	for binpath in "/bin" "/usr/bin" 
+	do
+		if [[ -x "$binpath/grep" ]] 
+			then GREP="$binpath/grep"
+		fi
+	done
+
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
@@ -71,9 +81,9 @@ _mvn()
           fi
         done
     else
-        if echo "${common_lifecycle_phases}" | /bin/grep -q "${cur}"; then
+        if echo "${common_lifecycle_phases}" | $GREP -q "${cur}"; then
           COMPREPLY=( $(compgen -S ' ' -W "${common_lifecycle_phases}" -- ${cur}) )
-        elif echo "${common_plugins}" | /bin/grep -q "${cur}"; then
+        elif echo "${common_plugins}" | $GREP -q "${cur}"; then
           COMPREPLY=( $(compgen -S ':' -W "${common_plugins}" -- ${cur}) )
         fi
     fi
