@@ -4,6 +4,7 @@ _mvn()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
+    GREP=`which grep`
 
     opts="-am|-amd|-B|-C|-c|-cpu|-D|-e|-emp|-ep|-f|-fae|-ff|-fn|-gs|-h|-l|-N|-npr|-npu|-nsu|-o|-P|-pl|-q|-rf|-s|-T|-t|-U|-up|-V|-v|-X"
 
@@ -72,9 +73,9 @@ _mvn()
           fi
         done
     else
-        if echo "${common_lifecycle_phases}" | grep -q "${cur}" ; then
+        if echo "${common_lifecycle_phases}" | ${GREP} -q "${cur}" ; then
           COMPREPLY=( $(compgen -S ' ' -W "${common_lifecycle_phases}" -- ${cur}) )
-        elif echo "${common_plugins}" | grep -q "${cur}"; then
+        elif echo "${common_plugins}" | ${GREP} -q "${cur}"; then
           COMPREPLY=( $(compgen -S ':' -W "${common_plugins}" -- ${cur}) )
         fi
     fi
