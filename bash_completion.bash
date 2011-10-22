@@ -9,7 +9,7 @@ _mvn()
     opts="-am|-amd|-B|-C|-c|-cpu|-D|-e|-emp|-ep|-f|-fae|-ff|-fn|-gs|-h|-l|-N|-npr|-npu|-nsu|-o|-P|-pl|-q|-rf|-s|-T|-t|-U|-up|-V|-v|-X"
 
     common_lifecycle_phases="clean|process-resources|compile|process-test-resources|test-compile|test|package|install|deploy|site"
-    common_plugins="deploy|failsafe|install|site|surefire|checkstyle|javadoc|jxr|pmd|ant|antrun|archetype|assembly|dependency|enforcer|gpg|help|release|repository|source|eclipse|idea|jetty|cargo|jboss|tomcat|tomcat6|exec|versions|sonar|war|ear|ejb|hibernate3"
+    common_plugins="deploy|failsafe|install|site|surefire|checkstyle|javadoc|jxr|pmd|ant|antrun|archetype|assembly|dependency|enforcer|gpg|help|release|repository|source|eclipse|idea|jetty|cargo|jboss|tomcat|tomcat6|exec|versions|sonar|war|ear|ejb|hibernate3|android|scm"
     
     plugin_goals_deploy="deploy:deploy-file"
     plugin_goals_failsafe="failsafe:integration-test|failsafe:verify"
@@ -45,27 +45,38 @@ _mvn()
     plugin_goals_exec="exec:exec|exec:java"
     plugin_goals_versions="versions:display-dependency-updates|versions:display-plugin-updates|versions:display-property-updates|versions:update-parent|versions:update-properties|versions:update-child-modules|versions:lock-snapshots|versions:unlock-snapshots|versions:resolve-ranges|versions:set|versions:use-releases|versions:use-next-releases|versions:use-latest-releases|versions:use-next-snapshots|versions:use-latest-snapshots|versions:use-next-versions|versions:use-latest-versions|versions:commit|versions:revert"
     plugin_goals_sonar="sonar:sonar|sonar:help"
+    plugin_goals_scm="scm:add|scm:checkin|scm:checkout|scm:update|scm:status"
 
     plugin_goals_war="war:war|war:exploded|war:inplace|war:manifest"
     plugin_goals_ear="ear:ear|ear:generate-application-xml"
     plugin_goals_ejb="ejb:ejb"
+    plugin_goals_android="android:apk|android:apklib|android:deploy|android:deploy-dependencies|android:dex|android:emulator-start|android:emulator-stop|android:emulator-stop-all|android:generate-sources|android:help|android:instrument|android:pull|android:push|android:redeploy|android:run|android:undeploy|android:unpack|android:version-update|android:zipalign"
 
     plugin_goals_hibernate3="hibernate3:hbm2ddl|hibernate3:help"
 
     options="-Dmaven.test.skip=true|-DskipTests|-Dmaven.surefire.debug|-DenableCiProfile|-Dpmd.skip=true|-Dcheckstyle.skip=true"
 
+    profile_settings=`[ -e ~/.m2/settings.xml ] && grep -e "<profile>" -A 1 ~/.m2/settings.xml | grep -e "<id>.*</id>" | sed 's/.*<id>/-P/' | sed 's/<\/id>//g'`
+    profile_pom=`[ -e pom.xml ] && grep -e "<profile>" -A 1 pom.xml | grep -e "<id>.*</id>" | sed 's/.*<id>/-P/' | sed 's/<\/id>//g'`
+
     local IFS=$'|\n'
 
     if [[ ${cur} == -D* ]] ; then
       COMPREPLY=( $(compgen -S ' ' -W "${options}" -- ${cur}) )
+
+    elif [[ ${cur} == -P* ]] ; then
+      COMPREPLY=( $(compgen -S ' ' -W "${profile_settings}|${profile_pom}" -- ${cur}) )
+
     elif [[ ${cur} == -* ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -S ' ' -- ${cur}) )
+
     elif [[ ${prev} == -pl ]] ; then
         if [[ ${cur} == *,* ]] ; then
             COMPREPLY=( $(compgen -d -S ',' -P "${cur%,*}," -- ${cur##*,}) )
         else
             COMPREPLY=( $(compgen -d -S ',' -- ${cur}) )
         fi
+
     elif [[ ${cur} == *:* ]] ; then
         for plugin in $common_plugins; do
           if [[ ${cur} == ${plugin}:* ]]; then
@@ -73,10 +84,11 @@ _mvn()
             COMPREPLY=( $(compgen -W "${!var_name}" -S ' ' -- ${cur}) )
           fi
         done
+
     else
-        if echo "${common_lifecycle_phases}" | ${GREP} -q "${cur}" ; then
+        if echo "${common_lifecycle_phases}" | tr '|' '\n' | grep -q -e "^${cur}" ; then
           COMPREPLY=( $(compgen -S ' ' -W "${common_lifecycle_phases}" -- ${cur}) )
-        elif echo "${common_plugins}" | ${GREP} -q "${cur}"; then
+        elif echo "${common_plugins}" | tr '|' '\n' | grep -q -e "^${cur}"; then
           COMPREPLY=( $(compgen -S ':' -W "${common_plugins}" -- ${cur}) )
         fi
     fi
