@@ -7,9 +7,10 @@ _mvn()
     GREP=`which grep`
 
     opts="-am|-amd|-B|-C|-c|-cpu|-D|-e|-emp|-ep|-f|-fae|-ff|-fn|-gs|-h|-l|-N|-npr|-npu|-nsu|-o|-P|-pl|-q|-rf|-s|-T|-t|-U|-up|-V|-v|-X"
+    long_opts="--also-make|--also-make-dependents|--batch-mode|--strict-checksums|--lax-checksums|--check-plugin-updates|--define|--errors|--encrypt-master-password|--encrypt-password|--file|--fail-at-end|--fail-fast|--fail-never|--global-settings|--help|--log-file|--non-recursive|--no-plugin-registry|--no-plugin-updates|--no-snapshot-updates|--offline|--activate-profiles|--projects|--quiet|--resume-from|--settings|--threads|--toolchains|--update-snapshots|--update-plugins|--show-version|--version|--debug"
 
     common_lifecycle_phases="clean|process-resources|compile|process-test-resources|test-compile|test|package|install|deploy|site"
-    common_plugins="deploy|failsafe|install|site|surefire|checkstyle|javadoc|jxr|pmd|ant|antrun|archetype|assembly|dependency|enforcer|gpg|help|release|repository|source|eclipse|idea|jetty|cargo|jboss|tomcat|tomcat6|exec|versions|sonar|war|ear|ejb|hibernate3|android|scm"
+    common_plugins="deploy|failsafe|install|site|surefire|checkstyle|javadoc|jxr|pmd|ant|antrun|archetype|assembly|dependency|enforcer|gpg|help|release|repository|source|eclipse|idea|jetty|cargo|jboss|tomcat|tomcat6|tomcat7|exec|versions|war|ear|ejb|android|scm|nexus|repository|sonar|license|hibernate3"
     
     plugin_goals_deploy="deploy:deploy-file"
     plugin_goals_failsafe="failsafe:integration-test|failsafe:verify"
@@ -40,8 +41,9 @@ _mvn()
     plugin_goals_jetty="jetty:run|jetty:run-exploded"
     plugin_goals_cargo="cargo:start|cargo:run|cargo:stop|cargo:deploy|cargo:undeploy|cargo:help"
     plugin_goals_jboss="jboss:start|jboss:stop|jboss:deploy|jboss:undeploy|jboss:redeploy"
-    plugin_goals_tomcat="tomcat:start|tomcat:stop|tomcat:deploy|tomcat:undeploy"
-    plugin_goals_tomcat6="tomcat6:run|tomcat6:stop|tomcat6:deploy|tomcat6:undeploy"
+    plugin_goals_tomcat="tomcat:start|tomcat:stop|tomcat:deploy|tomcat:undeploy|tomcat:undeploy"
+    plugin_goals_tomcat6="tomcat6:run|tomcat6:run-war|tomcat6:run-war-only|tomcat6:stop|tomcat6:deploy|tomcat6:undeploy"
+    plugin_goals_tomcat7="tomcat7:run|tomcat7:run-war|tomcat7:run-war-only|tomcat7:deploy"
     plugin_goals_exec="exec:exec|exec:java"
     plugin_goals_versions="versions:display-dependency-updates|versions:display-plugin-updates|versions:display-property-updates|versions:update-parent|versions:update-properties|versions:update-child-modules|versions:lock-snapshots|versions:unlock-snapshots|versions:resolve-ranges|versions:set|versions:use-releases|versions:use-next-releases|versions:use-latest-releases|versions:use-next-snapshots|versions:use-latest-snapshots|versions:use-next-versions|versions:use-latest-versions|versions:commit|versions:revert"
     plugin_goals_sonar="sonar:sonar|sonar:help"
@@ -51,6 +53,12 @@ _mvn()
     plugin_goals_ear="ear:ear|ear:generate-application-xml"
     plugin_goals_ejb="ejb:ejb"
     plugin_goals_android="android:apk|android:apklib|android:deploy|android:deploy-dependencies|android:dex|android:emulator-start|android:emulator-stop|android:emulator-stop-all|android:generate-sources|android:help|android:instrument|android:manifest-update|android:pull|android:push|android:redeploy|android:run|android:undeploy|android:unpack|android:version-update|android:zipalign"
+    plugin_goals_nexus="nexus:staging-list|nexus:staging-close|nexus:staging-drop|nexus:staging-release|nexus:staging-build-promotion|nexus:staging-profiles-list|nexus:settings-download"
+    plugin_goals_repository="repository:bundle-create|repository:bundle-pack|repository:help"
+
+    plugin_goals_sonar="sonar:sonar"
+    plugin_goals_license="license:format|license:check"
+    plugin_goals_hibernate3="hibernate3:hbm2ddl|hibernate3:help"
 
     plugin_goals_hibernate3="hibernate3:hbm2ddl|hibernate3:help"
 
@@ -66,6 +74,9 @@ _mvn()
 
     elif [[ ${cur} == -P* ]] ; then
       COMPREPLY=( $(compgen -S ' ' -W "${profile_settings}|${profile_pom}" -- ${cur}) )
+
+    elif [[ ${cur} == --* ]] ; then
+      COMPREPLY=( $(compgen -W "${long_opts}" -S ' ' -- ${cur}) )
 
     elif [[ ${cur} == -* ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -S ' ' -- ${cur}) )
